@@ -16,13 +16,19 @@ compose-bash:
 compose-build:
 	docker-compose build
 
-gcloud-builds-submit:
-	gcloud builds submit --config cloudbuild.yaml .
+build:
+	docker-compose build
 
 SUBDIRS := $(wildcard modules/**/*/.)
 
 lint:
 	yamllint modules
+
+compile:
+	@(for i in $$(find . -type f -name Main.java); do javac $$(dirname $$i)/*.java ; done)
+
+clean:
+	@$$(find . -type f -name *.class -delete)
 
 test: $(SUBDIRS)
 $(SUBDIRS):
@@ -30,4 +36,4 @@ $(SUBDIRS):
 	make test -s -C $@
 	@echo
 
-.PHONY: all $(SUBDIRS)
+.PHONY: all test $(SUBDIRS)
